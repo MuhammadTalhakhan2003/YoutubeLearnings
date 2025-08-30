@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selection Sort Visualization</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .array-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .array-element {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .unsorted {
+            background-color: #3498db;
+            color: white;
+        }
+        .comparing {
+            background-color: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+        .min-element {
+            background-color: #f39c12;
+            color: white;
+            transform: scale(1.1);
+        }
+        .sorted {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .code-container {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .explanation {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #3498db;
+        }
+        .complexity {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .complexity-item {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            margin: 0 10px;
+        }
+        .complexity-item h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Selection Sort Visualization</h1>
+        
+        <div class="array-container" id="arrayContainer">
+            <!-- Array elements will be generated here -->
+        </div>
+        
+        <div class="controls">
+            <button id="generateBtn">Generate New Array</button>
+            <button id="sortBtn">Start Sorting</button>
+            <button id="resetBtn" disabled>Reset</button>
+        </div>
+        
+        <div class="code-container">
+            <pre><code>function selectionSort(arr) {
+    const n = arr.length;
+    
+    for (let i = 0; i < n - 1; i++) {
+        // Assume the first element is the minimum
+        let minIndex = i;
+        
+        // Find the minimum element in the unsorted part
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIndex]) {
+                minIndex = j;
+            }
+        }
+        
+        // Swap the found minimum element with the first element
+        if (minIndex !== i) {
+            [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+        }
+    }
+    
+    return arr;
+}</code></pre>
+        </div>
+        
+        <div class="explanation">
+            <h2>How Selection Sort Works</h2>
+            <p>Selection Sort is a simple comparison-based sorting algorithm. It works by dividing the input array into two parts:</p>
+            <ol>
+                <li>A sorted subarray which is built up from left to right</li>
+                <li>An unsorted subarray which is the remaining elements</li>
+            </ol>
+            <p>The algorithm repeatedly finds the minimum element from the unsorted part and puts it at the end of the sorted part.</p>
+        </div>
+        
+        <div class="complexity">
+            <div class="complexity-item">
+                <h3>Time Complexity</h3>
+                <p>Best Case: O(n²)</p>
+                <p>Average Case: O(n²)</p>
+                <p>Worst Case: O(n²)</p>
+            </div>
+            <div class="complexity-item">
+                <h3>Space Complexity</h3>
+                <p>O(1) - In-place sorting</p>
+            </div>
+            <div class="complexity-item">
+                <h3>Properties</h3>
+                <p>Not stable (by default)</p>
+                <p>Not adaptive</p>
+                <p>Minimum number of swaps</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const arrayContainer = document.getElementById('arrayContainer');
+        const generateBtn = document.getElementById('generateBtn');
+        const sortBtn = document.getElementById('sortBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // State variables
+        let array = [];
+        let isSorting = false;
+        let animationSpeed = 500; // milliseconds
+        
+        // Initialize the array
+        generateNewArray();
+        
+        // Event listeners
+        generateBtn.addEventListener('click', generateNewArray);
+        sortBtn.addEventListener('click', startSorting);
+        resetBtn.addEventListener('click', resetArray);
+        
+        // Generate a new random array
+        function generateNewArray() {
+            if (isSorting) return;
+            
+            array = [];
+            arrayContainer.innerHTML = '';
+            
+            // Generate 10 random numbers between 1 and 100
+            for (let i = 0; i < 10; i++) {
+                const value = Math.floor(Math.random() * 100) + 1;
+                array.push(value);
+                
+                const element = document.createElement('div');
+                element.className = 'array-element unsorted';
+                element.textContent = value;
+                element.id = `element-${i}`;
+                arrayContainer.appendChild(element);
+            }
+            
+            sortBtn.disabled = false;
+            resetBtn.disabled = true;
+        }
+        
+        // Reset the array to its initial state
+        function resetArray() {
+            if (isSorting) return;
+            generateNewArray();
+        }
+        
+        // Start the sorting process
+        function startSorting() {
+            if (isSorting) return;
+            
+            isSorting = true;
+            generateBtn.disabled = true;
+            sortBtn.disabled = true;
+            resetBtn.disabled = true;
+            
+            // Create a copy of the original array for visualization
+            const visualArray = [...array];
+            selectionSortWithVisualization(visualArray);
+        }
+        
+        // Selection sort with visualization
+        async function selectionSortWithVisualization(arr) {
+            const n = arr.length;
+            const elements = document.querySelectorAll('.array-element');
+            
+            for (let i = 0; i < n - 1; i++) {
+                // Mark the current position
+                elements[i].classList.add('min-element');
+                await sleep(animationSpeed);
+                
+                let minIndex = i;
+                
+                // Find the minimum element in the unsorted part
+                for (let j = i + 1; j < n; j++) {
+                    // Highlight the current comparison
+                    elements[j].classList.add('comparing');
+                    await sleep(animationSpeed);
+                    
+                    if (arr[j] < arr[minIndex]) {
+                        // Remove min highlight from previous element
+                        elements[minIndex].classList.remove('min-element');
+                        minIndex = j;
+                        // Add min highlight to new element
+                        elements[minIndex].classList.add('min-element');
+                        await sleep(animationSpeed);
+                    }
+                    
+                    // Remove comparison highlight
+                    elements[j].classList.remove('comparing');
+                }
+                
+                // Swap the elements if needed
+                if (minIndex !== i) {
+                    // Visualize the swap
+                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+                    
+                    // Update the DOM elements
+                    elements[i].textContent = arr[i];
+                    elements[minIndex].textContent = arr[minIndex];
+                    
+                    // Remove min highlight from the swapped element
+                    elements[minIndex].classList.remove('min-element');
+                    await sleep(animationSpeed);
+                }
+                
+                // Mark the element as sorted
+                elements[i].classList.remove('min-element');
+                elements[i].classList.remove('unsorted');
+                elements[i].classList.add('sorted');
+            }
+            
+            // Mark the last element as sorted
+            elements[n - 1].classList.remove('unsorted');
+            elements[n - 1].classList.add('sorted');
+            
+            // Re-enable buttons
+            isSorting = false;
+            generateBtn.disabled = false;
+            resetBtn.disabled = false;
+        }
+        
+        // Utility function for delays
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Regular selection sort implementation (without visualization)
+        function selectionSort(arr) {
+            const n = arr.length;
+            
+            for (let i = 0; i < n - 1; i++) {
+                // Assume the first element is the minimum
+                let minIndex = i;
+                
+                // Find the minimum element in the unsorted part
+                for (let j = i + 1; j < n; j++) {
+                    if (arr[j] < arr[minIndex]) {
+                        minIndex = j;
+                    }
+                }
+                
+                // Swap the found minimum element with the first element
+                if (minIndex !== i) {
+                    [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+                }
+            }
+            
+            return arr;
+        }
+    </script>
+</body>
+</html>
