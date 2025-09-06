@@ -19,3 +19,5 @@ if(second === -Infinity){
 else{
     console.log("Second Max Found : ",second)
 }
+
+//o(n)
